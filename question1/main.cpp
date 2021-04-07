@@ -22,11 +22,42 @@ float ADCdata[10000];
 float F;
 
 Thread t1;
-//Thread t2;
+Thread t2;
 
 int rate = 8;
 float rate_out = 1/8;
 
+
+void Output(){
+  float p = period;
+  float i;
+  int j = 0;
+
+  while (j < sample)
+  {
+    for(i=0.0f; i < 1.0f && j < sample; i += 0.1f*rate) {
+      ADCdata[j] = Ain;
+      Sout = i;
+      wait_us(p);
+      j=j+1;
+    }
+
+    for(i=1.0f; i > 0.999f && j < sample; i -= 0.0001f/rate) {
+      ADCdata[j] = Ain;
+      Sout = i;
+      wait_us(p);
+      j=j+1;
+    }
+    
+    for(i=0.999f; i > 0.0f && j < sample; i -= 0.1f*rate) {
+      ADCdata[j] = Ain;
+      Sout = i;
+      wait_us(p);
+      j=j+1;
+    }
+  }
+
+}
 
 
 void up_fun(){
@@ -110,14 +141,16 @@ void select_rates(){
    //uLCD.background_color(0xFF0000);
    if(sel){
             rate_out = 1/rate;
-            //period = 1 / freq *100000;
-           // t2.start(&Output);
+            period = 1 / 4.166*100000;
+            t2.start(&Output);
    }
 }
 
 void ISR3(){
   queue.call(select_rates);
 }
+
+
 
 
 
@@ -128,4 +161,4 @@ int main() {
     up.rise(&ISR1);
     down.rise(&ISR2);
     sel.rise(&ISR3);
-}
+} 
