@@ -141,7 +141,7 @@ void select_rates(){
    //uLCD.background_color(0xFF0000);
    if(sel){
             rate_out = 1/rate;
-            period = 1 / 4.166*100000;
+            period = 1 / 4.166*10000;
             t2.start(&Output);
    }
 }
